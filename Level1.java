@@ -4,6 +4,7 @@ package androidlabyrinthe3d;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
@@ -39,7 +40,7 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	protected Node playerNode;
 	protected Geometry geom1;
 	protected Geometry levelgeom;
-	protected CharacterControl player;
+	protected RigidBodyControl player;
 	private RigidBodyControl landscape;
 	boolean isRunning=true;
 	private boolean left = false, right = false, up = false, down = false;
@@ -139,12 +140,13 @@ public class Level1 extends SimpleApplication implements ActionListener{
         geom1.setMaterial(matp);                   // set the cube's material
         geom1.move(0, 25f, 0);
         
-        SphereCollisionShape playerShape = new SphereCollisionShape(0.6f);
-	        player = new CharacterControl(playerShape, 0.01f);
+        BoxCollisionShape playerShape = new BoxCollisionShape(new Vector3f(0.6f, 0.6f, 0.6f));
+	        /*player = new CharacterControl(playerShape, 0.01f);
 	        player.setJumpSpeed(0);
 	        player.setFallSpeed(30);
 	        player.setGravity(30);
-	        player.setPhysicsLocation(new Vector3f(0, 15f, 1f));
+	        player.setPhysicsLocation(new Vector3f(0, 15f, 1f));*/
+        player = new RigidBodyControl(playerShape, 3);
 		geom1.addControl(player);
 
 		
@@ -184,14 +186,14 @@ public class Level1 extends SimpleApplication implements ActionListener{
     		terrain.collideWith(bv2, results);
     	  if (results.size() > 0) {
     		  Vector3f v = new Vector3f(0,0,0); //geom1.getLocalTranslation();
-    			if (left)  { v.x -= 0.05f; }
-    			if (right) { v.x += 0.05f; }
-    			if (up)    { v.z -= 0.05f;}
-    			if (down)  { v.z += 0.05f;}
+    			if (left)  { v.x -= 5f; }
+    			if (right) { v.x += 5f; }
+    			if (up)    { v.z -= 5f;}
+    			if (down)  { v.z += 5f;}
     			if( left || right || up || down){
-    				player.setWalkDirection(new Vector3f(v.x,v.y,v.z));
+    				//player.setWalkDirection(new Vector3f(v.x,v.y,v.z));
     				//geom1.setLocalTranslation(v);
-    				
+    				player.setLinearVelocity(v);
     			}
     		  } else {
     			  System.out.println("Dehors T1 " );
