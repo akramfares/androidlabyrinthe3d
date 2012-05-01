@@ -78,7 +78,7 @@ public class Test1 extends SimpleApplication implements ActionListener{
         rootNode.attachChild(terrain);
         spheres = new Node("Spheres");
         rootNode.attachChild(spheres);
-      //  playerNode = new Node("Player");
+        playerNode = new Node("Player");
         rootNode.attachChild(playerNode);
         
         // ------------ Setup the camera ---------------
