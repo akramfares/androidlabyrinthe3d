@@ -44,7 +44,7 @@ public class Terrain {
 	public static void setCollision(){
 		CollisionShape sceneShape =
 			    CollisionShapeFactory.createDynamicMeshShape(terrain);
-		control = new RigidBodyControl(sceneShape, 0);
+		control = new RigidBodyControl(sceneShape, 0.0f);
 		terrain.addControl(control);
 		
 		bulletAppState.getPhysicsSpace().add(control);
