@@ -1,4 +1,4 @@
-package Labyrinthe3D;
+package androidlabyrinthe3d;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;

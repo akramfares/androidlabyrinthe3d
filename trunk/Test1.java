@@ -1,4 +1,4 @@
-package Labyrinthe3D;
+package androidlabyrinthe3d;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bounding.BoundingVolume;
@@ -78,7 +78,7 @@ public class Test1 extends SimpleApplication implements ActionListener{
         rootNode.attachChild(terrain);
         spheres = new Node("Spheres");
         rootNode.attachChild(spheres);
-        playerNode = new Node("Player");
+      //  playerNode = new Node("Player");
         rootNode.attachChild(playerNode);
         
         // ------------ Setup the camera ---------------
