@@ -40,8 +40,10 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	protected Node playerNode;
 	protected Geometry geom1;
 	protected Geometry levelgeom;
+	protected Geometry s1geom;
 	protected RigidBodyControl player;
-	private RigidBodyControl landscape;
+	protected RigidBodyControl spherecontrol;
+	protected float speedSphere = 4f;
 	boolean isRunning=true;
 	private boolean left = false, right = false, up = false, down = false;
 	
@@ -114,8 +116,8 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		// --------------- Terrain Collision -----------
 		Terrain.setCollision();
 		// ---------------- Spheres ---------------------
-		Sphere sphere = new Sphere(32, 32, 1f);
-		Geometry s1geom=new Geometry("Sphere",sphere);
+		Sphere sphere = new Sphere(32, 32, 0.5f);
+		s1geom=new Geometry("Sphere",sphere);
 		s1geom.updateModelBound();
 		 
 		Material mats1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -124,13 +126,13 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		s1geom.move(10,-8,0); 
 		spheres.attachChild(s1geom);
 		
-		// ---------------- Spheres Collision -----------
+		/* ---------------- Spheres Collision -----------
 		CollisionShape sphereShape =
 			    CollisionShapeFactory.createDynamicMeshShape(spheres);
-		RigidBodyControl spherecontrol = new RigidBodyControl(sphereShape, 0);
+		spherecontrol = new RigidBodyControl(sphereShape, 3);
 		spheres.addControl(spherecontrol);
 		bulletAppState.getPhysicsSpace().add(spherecontrol);
-		
+		*/
 		// ---------------- Player -----------------------
 		Box b1=new Box(Vector3f.ZERO, 0.6f, 0.6f, 0.6f);
 		geom1 = new Geometry("Box", b1);
@@ -180,6 +182,25 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	
 	
 	public void simpleUpdate(float tpf) {
+		movePlayer();
+		moveObstacle();
+    }
+
+	private void moveObstacle() {
+		if(s1geom.getLocalTranslation().x < 5f && speedSphere<0) speedSphere = 0.5f;
+		if(s1geom.getLocalTranslation().x > 25f && speedSphere>0) speedSphere = -0.5f;
+		s1geom.move(new Vector3f(speedSphere,0,0));
+		CollisionResults results = new CollisionResults();
+    	BoundingVolume bv = geom1.getWorldBound();
+    		spheres.collideWith(bv, results);
+    	  if (results.size() > 0) {
+    		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
+    		  player.setLinearVelocity(new Vector3f(0,0,0));
+    	  }
+    	  
+	}
+
+	private void movePlayer() {
 		// Collision
     	CollisionResults results = new CollisionResults();
     	BoundingVolume bv2 = geom1.getWorldBound();
@@ -201,7 +222,8 @@ public class Level1 extends SimpleApplication implements ActionListener{
     	  camNode.lookAt(geom1.getLocalTranslation(), Vector3f.UNIT_Y);
     	//Move camNode, e.g. behind and above the target:
           camNode.setLocalTranslation(new Vector3f(geom1.getLocalTranslation().x, 20, 10));
-    }
+		
+	}
 
 	/**
 	 * @param args
