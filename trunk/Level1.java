@@ -41,9 +41,11 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	protected Geometry geom1;
 	protected Geometry levelgeom;
 	protected Geometry s1geom;
+	protected Geometry s2geom;
 	protected RigidBodyControl player;
 	protected RigidBodyControl spherecontrol;
 	protected float speedSphere = 4f;
+	protected float x,y,z;
 	boolean isRunning=true;
 	private boolean left = false, right = false, up = false, down = false;
 	
@@ -78,9 +80,7 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 		cam.setLocation(new Vector3f(10,20,10));
 		
-		terrain = Terrain.getTerrain();
-        spheres = new Node("Spheres");
-        rootNode.attachChild(spheres);
+		
         playerNode = new Node("Player");
         rootNode.attachChild(playerNode);
         
@@ -95,6 +95,7 @@ public class Level1 extends SimpleApplication implements ActionListener{
         playerNode.attachChild(camNode);
         
         // ----------- Configuration du Terrain ---------
+        terrain = Terrain.getTerrain();
         rootNode.attachChild(terrain);
         Terrain.setState(bulletAppState);
         Terrain.setAsset(assetManager);
@@ -115,16 +116,25 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		t5.getGeom().move(30f, -10, 0f);
 		// --------------- Terrain Collision -----------
 		Terrain.setCollision();
-		// ---------------- Spheres ---------------------
-		Sphere sphere = new Sphere(32, 32, 0.5f);
-		s1geom=new Geometry("Sphere",sphere);
-		s1geom.updateModelBound();
-		 
-		Material mats1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		mats1.setColor("Color", ColorRGBA.Blue);
-		s1geom.setMaterial(mats1);
-		s1geom.move(10,-8,0); 
-		spheres.attachChild(s1geom);
+		
+		// ----------- Configuration des Spheres ---------
+        spheres = SphereObstacle.getSpheres();
+        rootNode.attachChild(spheres);
+        SphereObstacle.setAsset(assetManager);
+        spheres.setLocalTranslation(new Vector3f(15,0,0));
+        // ----------- Spheres 1 ---------
+        SphereObstacle s1 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s1.getGeom().move(10,-8,0); 
+        // ----------- Spheres 2 ---------
+        SphereObstacle s2 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s2.getGeom().move(5,-8,0); 
+		// ----------- Spheres 3 ---------
+        SphereObstacle s3 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s3.getGeom().move(-5,-8,0);
+		// ----------- Spheres 4 ---------
+        SphereObstacle s4 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s4.getGeom().move(-10,-8,0);
+		
 		
 		/* ---------------- Spheres Collision -----------
 		CollisionShape sphereShape =
@@ -187,13 +197,12 @@ public class Level1 extends SimpleApplication implements ActionListener{
     }
 
 	private void moveObstacle() {
-		if(s1geom.getLocalTranslation().x < 5f && speedSphere<0) speedSphere = 0.5f;
+		/*if(s1geom.getLocalTranslation().x < 5f && speedSphere<0) speedSphere = 0.5f;
 		if(s1geom.getLocalTranslation().x > 25f && speedSphere>0) speedSphere = -0.5f;
-		s1geom.move(new Vector3f(speedSphere,0,0));
-		CollisionResults results = new CollisionResults();
-    	BoundingVolume bv = geom1.getWorldBound();
-    		spheres.collideWith(bv, results);
-    	  if (results.size() > 0) {
+		s1geom.move(new Vector3f(speedSphere,0,0));*/
+		SphereObstacle.getSpheres().rotate(0, 0.03f, 0);
+		
+    	  if (SphereObstacle.collideWith(geom1)) {
     		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
     		  player.setLinearVelocity(new Vector3f(0,0,0));
     	  }
