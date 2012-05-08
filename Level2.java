@@ -2,6 +2,7 @@ package androidlabyrinthe3d;
 
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.audio.AudioNode;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
@@ -50,7 +51,7 @@ public class Level2 extends SimpleApplication implements ActionListener{
 	private RigidBodyControl landscape;
 	boolean isRunning=true;
 	private boolean left = false, right = false, up = false, down = false;
-	
+	private AudioNode audio ;
 	@Override
 	public void simpleInitApp() {
 		 if (renderer.getCaps().contains(Caps.GLSL100)){
@@ -201,6 +202,11 @@ public class Level2 extends SimpleApplication implements ActionListener{
     		spheres.collideWith(bv, results);
     	  if (results.size() > 0) {
     		  effet();
+    		  audio = new AudioNode(assetManager, "Sound/Effects/Beep.ogg", false);
+  		    audio.setLooping(false);
+  		    audio.setVolume(45);
+  		    audio.playInstance();
+  		    rootNode.attachChild(audio);
     		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
     		  player.setLinearVelocity(new Vector3f(0,0,0));
     	  }
