@@ -12,9 +12,11 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 
 public class Terrain {
 	private Box mesh;
+	private Sphere meshSphere;
 	private Geometry geom;
 	private Material mat;
 	private static Node terrain = new Node("Terrain");
@@ -32,7 +34,18 @@ public class Terrain {
 		geom.setMaterial(mat);
 		terrain.attachChild(geom);
 	}
-	
+	//deuxieme constructeur mais avec un cube plat
+Terrain(int x,int y,float z,ColorRGBA color){
+		
+		meshSphere=new Sphere(x, y, z);
+		geom=new Geometry("Terrain",meshSphere);
+		geom.updateModelBound();
+		 
+		mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		mat.setColor("Color", color);
+		geom.setMaterial(mat);
+		terrain.attachChild(geom);
+	}
 	public Geometry getGeom(){ 
 		return geom; 
 	}
