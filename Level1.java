@@ -5,11 +5,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
-import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -27,14 +23,13 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Sphere;
 
 public class Level1 extends SimpleApplication implements ActionListener{
 	private FilterPostProcessor fpp;
 	private FogFilter fog;
 	private CameraNode camNode;
 	private BulletAppState bulletAppState;
-	protected Geometry sceneModel;
+	private SphereGroup sphereGroup;
 	protected Node terrain;
 	protected Node spheres;
 	protected Node playerNode;
@@ -118,9 +113,10 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		Terrain.setCollision();
 		
 		// ----------- Configuration des Spheres ---------
-        spheres = SphereObstacle.getSpheres();
+		SphereObstacle.setAsset(assetManager);
+		sphereGroup = new SphereGroup();
+        spheres = sphereGroup.getNode();
         rootNode.attachChild(spheres);
-        SphereObstacle.setAsset(assetManager);
         spheres.setLocalTranslation(new Vector3f(15,0,0));
         // ----------- Spheres 1 ---------
         SphereObstacle s1 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
@@ -134,7 +130,11 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		// ----------- Spheres 4 ---------
         SphereObstacle s4 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
 		s4.getGeom().move(-10,-8,0);
-		
+		// ----------- Add Spheres to the group ---------
+		sphereGroup.addSphere(s1);
+		sphereGroup.addSphere(s2);
+		sphereGroup.addSphere(s3);
+		sphereGroup.addSphere(s4);
 		
 		/* ---------------- Spheres Collision -----------
 		CollisionShape sphereShape =
@@ -200,9 +200,9 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		/*if(s1geom.getLocalTranslation().x < 5f && speedSphere<0) speedSphere = 0.5f;
 		if(s1geom.getLocalTranslation().x > 25f && speedSphere>0) speedSphere = -0.5f;
 		s1geom.move(new Vector3f(speedSphere,0,0));*/
-		SphereObstacle.getSpheres().rotate(0, 0.02f, 0);
+		sphereGroup.getNode().rotate(0, 0.02f, 0);
 		
-    	  if (SphereObstacle.collideWith(geom1)) {
+    	  if (sphereGroup.collideWith(geom1)) {
     		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
     		  player.setLinearVelocity(new Vector3f(0,0,0));
     	  }
@@ -226,7 +226,7 @@ public class Level1 extends SimpleApplication implements ActionListener{
     				player.setLinearVelocity(v);
     			}
     		  } else {
-    			  System.out.println("Dehors T1 " );
+    			  
     		  }
     	  camNode.lookAt(geom1.getLocalTranslation(), Vector3f.UNIT_Y);
     	//Move camNode, e.g. behind and above the target:
