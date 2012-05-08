@@ -2,8 +2,7 @@ package androidlabyrinthe3d;
 
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.bounding.BoundingBox;
-import com.jme3.bounding.BoundingSphere;
+import com.jme3.audio.AudioNode;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
@@ -16,6 +15,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -42,15 +42,19 @@ public class Level3 extends SimpleApplication implements ActionListener{
 	protected Node playerNode;
 	protected Geometry geom1;
 	protected Geometry levelgeom;
+	protected Geometry s1geom;
+	protected Geometry s2geom;
 	protected RigidBodyControl player;
-	private RigidBodyControl landscape;
+	protected RigidBodyControl spherecontrol;
+	protected float speedSphere = 4f;
+	protected float x,y,z;
 	boolean isRunning=true;
 	private boolean left = false, right = false, up = false, down = false;
-	//*****************************************
-	protected Geometry play ,geom,player1,player2;
-	 protected Node node;
+   private AudioNode audio ;
+	
 	@Override
 	public void simpleInitApp() {
+		flyCam.setMoveSpeed(40);
 		 if (renderer.getCaps().contains(Caps.GLSL100)){
 	            fpp=new FilterPostProcessor(assetManager);
 	            //fpp.setNumSamples(4);
@@ -80,11 +84,12 @@ public class Level3 extends SimpleApplication implements ActionListener{
 		viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 		cam.setLocation(new Vector3f(10,20,10));
 		
-		terrain = Terrain.getTerrain();
-        spheres = new Node("Spheres");
-        rootNode.attachChild(spheres);
+				
+		
         playerNode = new Node("Player");
         rootNode.attachChild(playerNode);
+       
+       
         
         // ------------ Setup the camera ---------------
         // Disable the default flyby cam
@@ -97,6 +102,7 @@ public class Level3 extends SimpleApplication implements ActionListener{
         playerNode.attachChild(camNode);
         
         // ----------- Configuration du Terrain ---------
+        terrain = Terrain.getTerrain();
         rootNode.attachChild(terrain);
         Terrain.setState(bulletAppState);
         Terrain.setAsset(assetManager);
@@ -117,23 +123,26 @@ public class Level3 extends SimpleApplication implements ActionListener{
 		t5.getGeom().move(30f, -10, 0f);
 		// --------------- Terrain Collision -----------
 		Terrain.setCollision();
-		// ---------------- Spheres ---------------------
-		Sphere sphere = new Sphere(32, 32, 1f);
-		Geometry s1geom=new Geometry("Sphere",sphere);
-		s1geom.updateModelBound();
-		 
-		Material mats1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		mats1.setColor("Color", ColorRGBA.Blue);
-		s1geom.setMaterial(mats1);
-		s1geom.move(10,-8,0); 
-		spheres.attachChild(s1geom);
 		
-		// ---------------- Spheres Collision -----------
-		CollisionShape sphereShape =
-			    CollisionShapeFactory.createDynamicMeshShape(spheres);
-		RigidBodyControl spherecontrol = new RigidBodyControl(sphereShape, 0);
-		spheres.addControl(spherecontrol);
-		bulletAppState.getPhysicsSpace().add(spherecontrol);
+		// ----------- Configuration des Spheres ---------
+        spheres = SphereObstacle.getSpheres();
+        rootNode.attachChild(spheres);
+        SphereObstacle.setAsset(assetManager);
+        spheres.setLocalTranslation(new Vector3f(15,0,0));
+        // ----------- Spheres 1 ---------
+        SphereObstacle s1 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s1.getGeom().move(-8,-8,5.5f); 
+       // ----------- Spheres 2 ---------
+        SphereObstacle s2 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s2.getGeom().move(-2,-8,5.5f); 
+		// ----------- Spheres 3 ---------
+        SphereObstacle s3 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s3.getGeom().move(2,-8,5.5f);
+		// ----------- Spheres 4 ---------
+        SphereObstacle s4 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s4.getGeom().move(8,-8,5.5f);
+		
+		
 		
 		// ---------------- Player -----------------------
 		Box b1=new Box(Vector3f.ZERO, 0.6f, 0.6f, 0.6f);
@@ -156,49 +165,12 @@ public class Level3 extends SimpleApplication implements ActionListener{
 		
          bulletAppState.getPhysicsSpace().add(player);
     	playerNode.attachChild(geom1);
-		//-------------------------------------------------------------------
-    	  Box b = new Box(Vector3f.ZERO, 0.1f, 0.1f, 0.1f);
-	        b.setBound(new BoundingSphere());
-	        b.updateBound();
-	        play = new Geometry("blue cube", b);
-	        
-	        play.setLocalTranslation(new Vector3f(0,2,0)); 
-	        Material mat = new Material(assetManager,
-	          "Common/MatDefs/Misc/Unshaded.j3md");
-	        mat.setColor("Color", ColorRGBA.Blue);
-	        
-	        play.setMaterial(mat);
-	      
-	        //*************************************************
-	        Sphere s=new Sphere(10,10,1f); 
-	        // Do bounds for the sphere, but we'll use a BoundingBox this time 
-	        s.setBound(new BoundingBox()); 
-	        s.updateBound(); 
-	        geom = new Geometry("Box", s);  // create cube geometry from the shape
-	        Material m = new Material(assetManager,
-	          "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
-	        //geom.setLocalTranslation(2, 0, 0);
-	        m.setColor("Color",ColorRGBA.LightGray); // set color of material to blue
-	        geom.setMaterial(m);
-	     // ---------------- Spheres Collision -----------
-			CollisionShape sphereShape2 =
-				    CollisionShapeFactory.createDynamicMeshShape(geom);
-			RigidBodyControl spherecontrol2 = new RigidBodyControl(sphereShape2, 0);
-			geom.addControl(spherecontrol);
-			
-			bulletAppState.getPhysicsSpace().add(spherecontrol2);
-	            node=new Node();
-		       node.attachChild(play);
-		       node.attachChild(geom);
-		       node.scale(1);
-	        
-	       ///rootNode.attachChild(node);
-	      
-
-
+		
 		
     	setUpKeys();
     	setupLighting();
+    	
+    	
 	}
 	
 	private void setUpKeys() {
@@ -223,6 +195,31 @@ public class Level3 extends SimpleApplication implements ActionListener{
 	
 	
 	public void simpleUpdate(float tpf) {
+		movePlayer();
+		moveObstacle();
+		listener.setLocation(cam.getLocation());
+	    listener.setRotation(cam.getRotation());
+    }
+
+	private void moveObstacle() {
+	if(SphereObstacle.getSpheres().getLocalTranslation().z< -8f && speedSphere<0) speedSphere = 0.05f;
+		if(SphereObstacle.getSpheres().getLocalTranslation().z> 0f && speedSphere>0) speedSphere = -0.05f;
+		SphereObstacle.getSpheres().move(new Vector3f(0,0,speedSphere));
+		
+    	  if (SphereObstacle.collideWith(geom1)) {
+    		    audio = new AudioNode(assetManager, "Sound/Effects/Beep.ogg", false);
+    		    audio.setLooping(false);
+    		    audio.setVolume(45);
+    		    audio.playInstance();
+    		    rootNode.attachChild(audio);
+    		 
+    		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
+    		  player.setLinearVelocity(new Vector3f(0,0,0));
+    	  }
+    	  
+	}
+     
+	private void movePlayer() {
 		// Collision
     	CollisionResults results = new CollisionResults();
     	BoundingVolume bv2 = geom1.getWorldBound();
@@ -239,37 +236,24 @@ public class Level3 extends SimpleApplication implements ActionListener{
     				player.setLinearVelocity(v);
     			}
     		  } else {
+    			   
     			  System.out.println("Dehors T1 " );
+    			  
     		  }
     	  camNode.lookAt(geom1.getLocalTranslation(), Vector3f.UNIT_Y);
     	//Move camNode, e.g. behind and above the target:
           camNode.setLocalTranslation(new Vector3f(geom1.getLocalTranslation().x, 20, 10));
-          //------------------------------------------------------------------------------
-	    	try {
-	            Thread.sleep(40);
-	            Vector3f v = node.getLocalTranslation();
-	            node.setLocalTranslation(v.x+0.1f, v.y, v.z);
-	            Vector3f vec=spheres.getLocalScale();
-	           
-	        //  spheres.scale(1+0.001f);
-	        } catch (InterruptedException ex) {
-	           
-	        }
-	        // make the player rotate
-	    for(int i=0 ;i<5 ;i++ ){
-	      // spheres.rotate(i*tpf*0.4f, 0, 0); 
-	      
-	    }
-	    
-    }
-
+		
+	}
+  
+	 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		Level3 app = new Level3();
         app.start(); // start the game
-
+  
 	}
 
 	@Override
