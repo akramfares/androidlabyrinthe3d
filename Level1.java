@@ -171,10 +171,10 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	}
 	
 	private void setUpKeys() {
-		inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
-		inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
-		inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_U));
-		inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_J));
+		inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_LEFT));
+		inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_RIGHT));
+		inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_UP));
+		inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_DOWN));
 		inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
 		inputManager.addListener(this, "Left");
 		inputManager.addListener(this, "Right");
@@ -200,7 +200,7 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		/*if(s1geom.getLocalTranslation().x < 5f && speedSphere<0) speedSphere = 0.5f;
 		if(s1geom.getLocalTranslation().x > 25f && speedSphere>0) speedSphere = -0.5f;
 		s1geom.move(new Vector3f(speedSphere,0,0));*/
-		SphereObstacle.getSpheres().rotate(0, 0.03f, 0);
+		SphereObstacle.getSpheres().rotate(0, 0.02f, 0);
 		
     	  if (SphereObstacle.collideWith(geom1)) {
     		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
