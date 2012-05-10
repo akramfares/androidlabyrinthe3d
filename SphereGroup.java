@@ -10,7 +10,7 @@ import com.jme3.scene.Spatial;
 public class SphereGroup {
 	
 	ArrayList<SphereObstacle> spheres = new ArrayList<SphereObstacle>();
-	private static Node node = new Node("Spheres");
+	private Node node = new Node("Spheres");
 	
 	SphereGroup(){
 	}
@@ -31,10 +31,10 @@ public class SphereGroup {
 	 */
 	public boolean collideWith(Spatial s){
 		CollisionResults results = new CollisionResults();
-   	BoundingVolume bv = s.getWorldBound();
-   	s.collideWith(bv, results);
-   	 if (results.size() > 0) return true;
-   	 else return false;
+		BoundingVolume bv = s.getWorldBound();
+		node.collideWith(bv, results);
+   	 	if (results.size() > 0) return true;
+   	 	else return false;
 	}
 	
 }
