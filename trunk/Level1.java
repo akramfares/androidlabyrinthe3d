@@ -30,8 +30,10 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	private CameraNode camNode;
 	private BulletAppState bulletAppState;
 	private SphereGroup sphereGroup;
+	private SphereGroup sphereGroup2;
 	protected Node terrain;
 	protected Node spheres;
+	protected Node spheres2;
 	protected Node playerNode;
 	protected Geometry geom1;
 	protected Geometry levelgeom;
@@ -136,6 +138,29 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		sphereGroup.addSphere(s3);
 		sphereGroup.addSphere(s4);
 		
+		// ----------- Configuration des Spheres ---------
+		sphereGroup2 = new SphereGroup();
+		spheres2 = sphereGroup2.getNode();
+        rootNode.attachChild(spheres2);
+        spheres2.setLocalTranslation(new Vector3f(15,0,0));
+        // ----------- Spheres 1 ---------
+        SphereObstacle sg1 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		sg1.getGeom().move(10,-8,0); 
+        // ----------- Spheres 2 ---------
+        SphereObstacle sg2 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		sg2.getGeom().move(5,-8,0); 
+		// ----------- Spheres 3 ---------
+        SphereObstacle sg3 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		sg3.getGeom().move(-5,-8,0);
+		// ----------- Spheres 4 ---------
+        SphereObstacle sg4 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		sg4.getGeom().move(-10,-8,0);
+		// ----------- Add Spheres to the group ---------
+		sphereGroup2.addSphere(sg1);
+		sphereGroup2.addSphere(sg2);
+		sphereGroup2.addSphere(sg3);
+		sphereGroup2.addSphere(sg4);
+		
 		/* ---------------- Spheres Collision -----------
 		CollisionShape sphereShape =
 			    CollisionShapeFactory.createDynamicMeshShape(spheres);
@@ -201,8 +226,14 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		if(s1geom.getLocalTranslation().x > 25f && speedSphere>0) speedSphere = -0.5f;
 		s1geom.move(new Vector3f(speedSphere,0,0));*/
 		sphereGroup.getNode().rotate(0, 0.02f, 0);
+		sphereGroup2.getNode().rotate(0, -0.02f, 0);
 		
     	  if (sphereGroup.collideWith(geom1)) {
+    		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
+    		  player.setLinearVelocity(new Vector3f(0,0,0));
+    	  }
+    	  
+    	  if (sphereGroup2.collideWith(geom1)) {
     		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
     		  player.setLinearVelocity(new Vector3f(0,0,0));
     	  }
