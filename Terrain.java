@@ -29,8 +29,9 @@ public class Terrain {
 		geom=new Geometry("Terrain",mesh);
 		geom.updateModelBound();
 		 
-		mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		mat.setColor("Color", color);
+		mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");  // create a simple material
+        mat.setBoolean("UseMaterialColors",true); 
+        mat.setColor("Diffuse", color);
 		geom.setMaterial(mat);
 		terrain.attachChild(geom);
 	}

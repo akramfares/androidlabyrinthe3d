@@ -17,8 +17,9 @@ public class SphereObstacle{
 		geom=new Geometry("Sphere",mesh);
 		geom.updateModelBound();
 		 
-		mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		mat.setColor("Color", color);
+		Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");  // create a simple material
+        mat.setBoolean("UseMaterialColors",true); 
+        mat.setColor("Diffuse", color);
 		geom.setMaterial(mat);
 	}
 	
