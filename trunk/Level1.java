@@ -15,19 +15,23 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.renderer.Caps;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Box;
+import com.jme3.shadow.BasicShadowRenderer;
+import com.jme3.shadow.PssmShadowRenderer;
 
 public class Level1 extends SimpleApplication implements ActionListener{
 	private FilterPostProcessor fpp;
 	private FogFilter fog;
 	private CameraNode camNode;
+	private PssmShadowRenderer pssmRenderer;
+	private BasicShadowRenderer bsr;
 	private BulletAppState bulletAppState;
 	private SphereGroup sphereGroup;
 	private SphereGroup sphereGroup2;
@@ -45,16 +49,17 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	protected float x,y,z;
 	boolean isRunning=true;
 	private boolean left = false, right = false, up = false, down = false;
+	private CollisionResults results;
 	
 	@Override
 	public void simpleInitApp() {
-		 if (renderer.getCaps().contains(Caps.GLSL100)){
+		 /*if (renderer.getCaps().contains(Caps.GLSL100)){
 	            fpp=new FilterPostProcessor(assetManager);
 	            //fpp.setNumSamples(4);
-	            CartoonEdgeFilter toon=new CartoonEdgeFilter();
+	            //CartoonEdgeFilter toon=new CartoonEdgeFilter();
 	            //toon.setDepthThreshold(0);
 	            //toon.setDepthSensitivity(150);
-	            fpp.addFilter(toon);
+	            //fpp.addFilter(toon);
 	            //viewPort.addProcessor(fpp);
 	            
 	            //fpp=new FilterPostProcessor(assetManager);
@@ -65,14 +70,26 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	            fog.setFogDensity(2.0f);
 	            fpp.addFilter(fog);
 	            viewPort.addProcessor(fpp);
-	        }
-		 
+	        }*/
+		 DirectionalLight sun = new DirectionalLight();
+		 sun.setColor(ColorRGBA.White);
+		 sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
+		 rootNode.addLight(sun);
+		 	
+		 pssmRenderer = new PssmShadowRenderer(assetManager, 1024, 1);
+		    pssmRenderer.setDirection(new Vector3f(-1f,-1f,-.5f).normalizeLocal()); // light direction
+		    pssmRenderer.setShadowIntensity(.5f);
+		    viewPort.addProcessor(pssmRenderer);
+		    
+		
+        
 		bulletAppState = new BulletAppState();
 		stateManager.attach(bulletAppState);
 		bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 		
 		BulletAppState bulletAppState=new BulletAppState();
 		stateManager.attach(bulletAppState);
+		
 		
 		viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 		cam.setLocation(new Vector3f(10,20,10));
@@ -113,6 +130,7 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		t5.getGeom().move(30f, -10, 0f);
 		// --------------- Terrain Collision -----------
 		Terrain.setCollision();
+		results = new CollisionResults();
 		
 		// ----------- Configuration des Spheres ---------
 		SphereObstacle.setAsset(assetManager);
@@ -172,8 +190,11 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		Box b1=new Box(Vector3f.ZERO, 0.6f, 0.6f, 0.6f);
 		geom1 = new Geometry("Box", b1);
 		geom1.updateModelBound();
-        Material matp = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
-        matp.setColor("Color", ColorRGBA.Red);   // set color of material to blue
+        Material matp = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");  // create a simple material
+        matp.setBoolean("UseMaterialColors",true); 
+        matp.setColor("Diffuse", ColorRGBA.Red);
+        matp.setColor("Ambient", ColorRGBA.Red);
+        matp.setColor("Specular", ColorRGBA.Red);
         geom1.setMaterial(matp);                   // set the cube's material
         geom1.move(0, 25f, 0);
         
@@ -185,11 +206,15 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	        player.setPhysicsLocation(new Vector3f(0, 15f, 1f));*/
         player = new RigidBodyControl(playerShape, 3);
 		geom1.addControl(player);
-
-		
          bulletAppState.getPhysicsSpace().add(player);
     	playerNode.attachChild(geom1);
-		
+    	
+    	
+    	terrain.setShadowMode(ShadowMode.Receive);
+    	spheres.setShadowMode(ShadowMode.CastAndReceive);
+    	spheres2.setShadowMode(ShadowMode.CastAndReceive);
+    	geom1.setShadowMode(ShadowMode.CastAndReceive);
+    	
 		
     	setUpKeys();
     	setupLighting();
@@ -242,7 +267,6 @@ public class Level1 extends SimpleApplication implements ActionListener{
 
 	private void movePlayer() {
 		// Collision
-    	CollisionResults results = new CollisionResults();
     	BoundingVolume bv2 = geom1.getWorldBound();
     		terrain.collideWith(bv2, results);
     	  if (results.size() > 0) {
