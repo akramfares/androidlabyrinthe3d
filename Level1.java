@@ -2,6 +2,7 @@ package androidlabyrinthe3d;
 
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bounding.BoundingVolume;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
@@ -16,8 +17,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.FogFilter;
-import com.jme3.renderer.Caps;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -25,6 +24,7 @@ import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Box;
 import com.jme3.shadow.BasicShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer;
+import com.jme3.texture.Texture;
 
 public class Level1 extends SimpleApplication implements ActionListener{
 	private FilterPostProcessor fpp;
@@ -70,18 +70,23 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	            fog.setFogDensity(2.0f);
 	            fpp.addFilter(fog);
 	            viewPort.addProcessor(fpp);
-	        }*/
+	        }
 		 DirectionalLight sun = new DirectionalLight();
 		 sun.setColor(ColorRGBA.White);
 		 sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
 		 rootNode.addLight(sun);
 		 	
-		 pssmRenderer = new PssmShadowRenderer(assetManager, 1024, 1);
-		    pssmRenderer.setDirection(new Vector3f(-1f,-1f,-.5f).normalizeLocal()); // light direction
-		    pssmRenderer.setShadowIntensity(.5f);
-		    viewPort.addProcessor(pssmRenderer);
-		    
-		
+		 
+		 pssmRenderer = new PssmShadowRenderer(assetManager, 256 , 2);
+	        pssmRenderer.setDirection(new Vector3f(0.99f,-14.99f,4.99f).normalizeLocal());
+	        pssmRenderer.setLambda(0.55f);
+	        pssmRenderer.setShadowIntensity(0.6f);
+	        pssmRenderer.setCompareMode(CompareMode.Software);
+	        pssmRenderer.setFilterMode(FilterMode.PCF8);
+	        pssmRenderer.setEdgesThickness(1);
+	        pssmRenderer.setShadowZExtend(500);
+	        viewPort.addProcessor(pssmRenderer);
+		*/
         
 		bulletAppState = new BulletAppState();
 		stateManager.attach(bulletAppState);
@@ -130,7 +135,6 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		t5.getGeom().move(30f, -10, 0f);
 		// --------------- Terrain Collision -----------
 		Terrain.setCollision();
-		results = new CollisionResults();
 		
 		// ----------- Configuration des Spheres ---------
 		SphereObstacle.setAsset(assetManager);
@@ -190,11 +194,16 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		Box b1=new Box(Vector3f.ZERO, 0.6f, 0.6f, 0.6f);
 		geom1 = new Geometry("Box", b1);
 		geom1.updateModelBound();
-        Material matp = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");  // create a simple material
-        matp.setBoolean("UseMaterialColors",true); 
-        matp.setColor("Diffuse", ColorRGBA.Red);
-        matp.setColor("Ambient", ColorRGBA.Red);
-        matp.setColor("Specular", ColorRGBA.Red);
+//        Material matp = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");  // create a simple material
+//        matp.setBoolean("UseMaterialColors",true); 
+//        matp.setColor("Diffuse", ColorRGBA.Red);
+//        matp.setColor("Ambient", ColorRGBA.Red);
+//        matp.setColor("Specular", ColorRGBA.Red);
+		Material matp = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+	    //Texture tex_ml = assetManager.loadTexture("");
+	    assetManager.registerLocator("assets/Textures/", FileLocator.class);
+	    Texture tex_ml = assetManager.loadTexture("player.png");
+	    matp.setTexture("ColorMap", tex_ml);
         geom1.setMaterial(matp);                   // set the cube's material
         geom1.move(0, 25f, 0);
         
@@ -209,12 +218,12 @@ public class Level1 extends SimpleApplication implements ActionListener{
          bulletAppState.getPhysicsSpace().add(player);
     	playerNode.attachChild(geom1);
     	
-    	
+    	/*
     	terrain.setShadowMode(ShadowMode.Receive);
-    	spheres.setShadowMode(ShadowMode.CastAndReceive);
-    	spheres2.setShadowMode(ShadowMode.CastAndReceive);
-    	geom1.setShadowMode(ShadowMode.CastAndReceive);
-    	
+    	spheres.setShadowMode(ShadowMode.Cast);
+    	spheres2.setShadowMode(ShadowMode.Cast);
+    	geom1.setShadowMode(ShadowMode.Cast);
+    	*/
 		
     	setUpKeys();
     	setupLighting();
@@ -267,6 +276,7 @@ public class Level1 extends SimpleApplication implements ActionListener{
 
 	private void movePlayer() {
 		// Collision
+		results = new CollisionResults();
     	BoundingVolume bv2 = geom1.getWorldBound();
     		terrain.collideWith(bv2, results);
     	  if (results.size() > 0) {
