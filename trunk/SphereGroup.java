@@ -6,6 +6,7 @@ import com.jme3.bounding.BoundingVolume;
 import com.jme3.collision.CollisionResults;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Sphere;
 
 public class SphereGroup {
 	
@@ -36,5 +37,14 @@ public class SphereGroup {
    	 	if (results.size() > 0) return true;
    	 	else return false;
 	}
+
+	public ArrayList<SphereObstacle> getSpheres() {
+		return spheres;
+	}
+
+	public void setSpheres(ArrayList<SphereObstacle> spheres) {
+		this.spheres = spheres;
+	}
+	
 	
 }

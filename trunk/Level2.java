@@ -45,6 +45,7 @@ public class Level2 extends SimpleApplication implements ActionListener{
 	protected Geometry levelgeom;
 	protected Geometry s1geom ;
    protected float speedSphere = 4f;
+   protected float speedT4 = 4f;
    protected Node node;
 	//protected CharacterControl player;
 	protected RigidBodyControl player;
@@ -52,19 +53,15 @@ public class Level2 extends SimpleApplication implements ActionListener{
 	boolean isRunning=true;
 	private boolean left = false, right = false, up = false, down = false;
 	private AudioNode audio ;
+	private Terrain t1,t2,t3,t4,t5 ;
 	@Override
 	public void simpleInitApp() {
 		 if (renderer.getCaps().contains(Caps.GLSL100)){
 	            fpp=new FilterPostProcessor(assetManager);
-	            //fpp.setNumSamples(4);
+	           
 	            CartoonEdgeFilter toon=new CartoonEdgeFilter();
-	            //toon.setDepthThreshold(0);
-	            //toon.setDepthSensitivity(150);
-	            fpp.addFilter(toon);
-	            //viewPort.addProcessor(fpp);
-	            
-	            //fpp=new FilterPostProcessor(assetManager);
-	            //fpp.setNumSamples(4);
+	           	fpp.addFilter(toon);
+	           
 	            fog=new FogFilter();
 	            fog.setFogColor(new ColorRGBA(0.9f, 0.9f, 0.9f, 1.0f));
 	            fog.setFogDistance(155);
@@ -106,20 +103,20 @@ public class Level2 extends SimpleApplication implements ActionListener{
         Terrain.setState(bulletAppState);
         Terrain.setAsset(assetManager);
      // --------------- Terrain 1 3x6 ----------------
-		Terrain t1 = new Terrain(1, 0.5f, 6, ColorRGBA.Green);
+		 t1 = new Terrain(1, 0.5f, 6, ColorRGBA.Orange);
 		t1.getGeom().move(0,-10,0);
 		// --------------- Terrain 2 2x1 ----------------
-		Terrain t2 = new Terrain(4, 0.5f,1f, ColorRGBA.White);
+		 t2 = new Terrain(2f, 0.6f,1f, ColorRGBA.White);
 		t2.getGeom().move(5,-10,5);
 		// --------------- Terrain 3 10x4 ----------------
-		Terrain t3 = new Terrain(1, 0.5f, 4, ColorRGBA.White);
-		t3.getGeom().move(8f, -10, 0f);
+		t3 = new Terrain(1f, 0.5f, 0.6f, ColorRGBA.White);
+		t3.getGeom().move(15f, -10, 0f);
 		// --------------- Terrain 4 2x1 ----------------
-		Terrain t4 = new Terrain(6, 0.5f, 4, ColorRGBA.White);
+		 t4 = new Terrain(0.6f, 0.5f, 0.6f, ColorRGBA.White);
 		t4.getGeom().move(9f, -10, -5f);
 		// --------------- Terrain 5 3x6 ----------------
-		Terrain t5 = new Terrain(2, 0.5f, 1, ColorRGBA.Green);
-		t5.getGeom().move(14f, -10, 0f);
+		// t5 = new Terrain(2, 0.5f, 1, ColorRGBA.Green);
+		//t5.getGeom().move(14f, -10, 0f);
 		// --------------- Terrain Collision -----------
 		Terrain.setCollision();
 		// ---------------- Spheres ---------------------
@@ -133,13 +130,7 @@ public class Level2 extends SimpleApplication implements ActionListener{
 		s1geom.move(12,-8,0); 
 		spheres.attachChild(s1geom);
 		
-		/* ---------------- Spheres Collision -----------
-		CollisionShape sphereShape =
-			    CollisionShapeFactory.createDynamicMeshShape(spheres);
-		spherecontrol = new RigidBodyControl(sphereShape, 3);
-		spheres.addControl(spherecontrol);
-		bulletAppState.getPhysicsSpace().add(spherecontrol);
-		*/
+		
 		// ---------------- Player -----------------------
 		Box b1=new Box(Vector3f.ZERO, 0.6f, 0.6f, 0.6f);
 		geom1 = new Geometry("Box", b1);
@@ -150,11 +141,7 @@ public class Level2 extends SimpleApplication implements ActionListener{
         geom1.move(0, 25f, 0);
         
         BoxCollisionShape playerShape = new BoxCollisionShape(new Vector3f(0.6f, 0.6f, 0.6f));
-	        /*player = new CharacterControl(playerShape, 0.01f);
-	        player.setJumpSpeed(0);
-	        player.setFallSpeed(30);
-	        player.setGravity(30);
-	        player.setPhysicsLocation(new Vector3f(0, 15f, 1f));*/
+	      
         player = new RigidBodyControl(playerShape, 3);
 		geom1.addControl(player);
 
@@ -168,10 +155,10 @@ public class Level2 extends SimpleApplication implements ActionListener{
 	}
 	
 	private void setUpKeys() {
-		inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_H));
-		inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
-		inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_U));
-		inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_J));
+		inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_LEFT));
+		inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_RIGHT));
+		inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_UP));
+		inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_DOWN));
 		inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
 		inputManager.addListener(this, "Left");
 		inputManager.addListener(this, "Right");
@@ -190,9 +177,23 @@ public class Level2 extends SimpleApplication implements ActionListener{
 	
 	public void simpleUpdate(float tpf) {
 		movePlayer();
-		moveObstacle();
+		//moveObstacle();
+		moveTerrain();
     }
+  private void moveTerrain(){
+	  if(t2.getGeom().getLocalTranslation().x < 3f && speedSphere<0) speedSphere = 0.005f;
+	  if(t2.getGeom().getLocalTranslation().x > 15f && speedSphere>0) speedSphere = -0.005f;
+	  if(t4.getGeom().getLocalTranslation().x < 15f && speedSphere<0) speedT4 = 0.05f;
+	  if(t4.getGeom().getLocalTranslation().x > -2f && speedSphere>0) speedT4  = -0.05f;
+		//if(t3.getGeom().getLocalTranslation().z < -4f && speedSphere<0) speedSphere = 0.05f;
+	//	if(t3.getGeom().getLocalTranslation().z > 4f && speedSphere>0) speedSphere = -0.05f;
+		
 
+		//t3.getGeom().move(new Vector3f(speedSphere,0,0));
+		t2.getGeom().move(new Vector3f(speedSphere,0,0));
+		t4.getGeom().move(new Vector3f(speedT4 ,0,0));
+	
+  }
 	private void moveObstacle() {
 		if(s1geom.getLocalTranslation().x < 5f && speedSphere<0) speedSphere = 0.09f;
 		if(s1geom.getLocalTranslation().x > 12f && speedSphere>0) speedSphere = -0.09f;
@@ -202,7 +203,7 @@ public class Level2 extends SimpleApplication implements ActionListener{
     		spheres.collideWith(bv, results);
     	  if (results.size() > 0) {
     		  effet();
-    		  audio = new AudioNode(assetManager, "Sound/Effects/Beep.ogg", false);
+    		  audio = new AudioNode(assetManager, "Sound/Effects/Bang.wav", false);
   		    audio.setLooping(false);
   		    audio.setVolume(45);
   		    audio.playInstance();
@@ -225,15 +226,14 @@ public class Level2 extends SimpleApplication implements ActionListener{
     			if (up)    { v.z -= 5f;}
     			if (down)  { v.z += 5f;}
     			if( left || right || up || down){
-    				//player.setWalkDirection(new Vector3f(v.x,v.y,v.z));
-    				//geom1.setLocalTranslation(v);
+    				
     				player.setLinearVelocity(v);
     			}
     		  } else {
     			  System.out.println("Dehors T1 " );
     		  }
     	  camNode.lookAt(geom1.getLocalTranslation(), Vector3f.UNIT_Y);
-    	//Move camNode, e.g. behind and above the target:
+    	
           camNode.setLocalTranslation(new Vector3f(geom1.getLocalTranslation().x, 20, 10));
 		
 	}

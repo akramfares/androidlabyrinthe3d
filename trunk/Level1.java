@@ -14,6 +14,8 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.FogFilter;
@@ -49,6 +51,7 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	protected float x,y,z;
 	boolean isRunning=true;
 	private boolean left = false, right = false, up = false, down = false;
+	private Vector3f speed = Vector3f.ZERO;
 	private CollisionResults results;
 	
 	@Override
@@ -275,23 +278,23 @@ public class Level1 extends SimpleApplication implements ActionListener{
 	}
 
 	private void movePlayer() {
+		speed = player.getLinearVelocity();
+		player.setAngularVelocity(Vector3f.ZERO);
 		// Collision
 		results = new CollisionResults();
     	BoundingVolume bv2 = geom1.getWorldBound();
     		terrain.collideWith(bv2, results);
-    	  if (results.size() > 0) {
-    		  Vector3f v = new Vector3f(0,0,0); //geom1.getLocalTranslation();
-    			if (left)  { v.x -= 5f; }
-    			if (right) { v.x += 5f; }
-    			if (up)    { v.z -= 5f;}
-    			if (down)  { v.z += 5f;}
+    	  if (results.size() > 0 && geom1.getLocalTranslation().y >=-8.95f) {
+    		  // speed = new Vector3f(0,0,0); //geom1.getLocalTranslation();
+    			if (left)  { if(speed.x > -4f) speed.x -= 0.4f; }
+    			if (right) { if(speed.x < 4f) speed.x += 0.4f; }
+    			if (up)    { if(speed.z > -4f) speed.z -= 0.4f; }
+    			if (down)  { if(speed.z < 4f) speed.z += 0.4f; }
     			if( left || right || up || down){
     				//player.setWalkDirection(new Vector3f(v.x,v.y,v.z));
     				//geom1.setLocalTranslation(v);
-    				player.setLinearVelocity(v);
+    				player.setLinearVelocity(speed);
     			}
-    		  } else {
-    			  
     		  }
     	  camNode.lookAt(geom1.getLocalTranslation(), Vector3f.UNIT_Y);
     	//Move camNode, e.g. behind and above the target:
@@ -320,6 +323,8 @@ public class Level1 extends SimpleApplication implements ActionListener{
 			down = value;
 			} else if (binding.equals("Jump")) {
 				player.setPhysicsLocation(new Vector3f(0, 25f, 0));
+				player.setPhysicsRotation(Matrix3f.ZERO);
+				player.setLinearVelocity(Vector3f.ZERO);
 			}
 		
 	}

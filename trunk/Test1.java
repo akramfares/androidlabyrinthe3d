@@ -165,12 +165,12 @@ public class Test1 extends SimpleApplication implements ActionListener{
 		bulletAppState.getPhysicsSpace().add(levelcontrol);
 		
 		// ---------------- Spheres ---------------------
-		Sphere sphere = new Sphere(32, 32, 1f);
+		Sphere sphere = new Sphere(5, 5, 10);
 		Geometry s1geom=new Geometry("Sphere",sphere);
 		s1geom.updateModelBound();
 		 
 		Material mats1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		mats1.setColor("Color", ColorRGBA.Blue);
+		mats1.setColor("Color", ColorRGBA.randomColor());
 		s1geom.setMaterial(mats1);
 		s1geom.move(10,-8,0); 
 		spheres.attachChild(s1geom);
