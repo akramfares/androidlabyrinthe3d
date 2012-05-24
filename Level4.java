@@ -225,7 +225,7 @@ public class Level4 extends SimpleApplication implements ActionListener{
 			player.setLinearVelocity(new Vector3f(0,0,0));
 		}
 
-	
+		debris.setEndSize(0.1f);
 
 	}
 	private void moveEffet() {
