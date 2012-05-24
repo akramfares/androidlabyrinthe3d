@@ -36,7 +36,7 @@ public class Terrain {
 		    Texture tex_ml = assetManager.loadTexture("terrain.png");
 		    tex_ml.setWrap(Texture.WrapMode.Repeat);
 		    mat.setTexture("ColorMap", tex_ml);
-		    mesh.scaleTextureCoordinates(new Vector2f(2,4));
+		    mesh.scaleTextureCoordinates(new Vector2f(z/2,x/2));
 		}
 		else{
 			mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");  // create a simple material
