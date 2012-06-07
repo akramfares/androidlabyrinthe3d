@@ -31,18 +31,21 @@ import com.jme3.shadow.BasicShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer;
 import com.jme3.texture.Texture;
 
-public class Level4 extends SimpleApplication implements ActionListener{
+public class Level6 extends SimpleApplication implements ActionListener{
 	private FilterPostProcessor fpp;
 	private FogFilter fog;
 	private CameraNode camNode;
 	private PssmShadowRenderer pssmRenderer;
 	private BasicShadowRenderer bsr;
 	private BulletAppState bulletAppState;
+	private SphereGroup sphereGroup;
+	private SphereGroup sphereGroup2;
 	private CubeGroup cubeGroup;
-	private CubeGroup cubeGroup2;
-	protected Node terrain;
 	protected Node cubes;
-	protected Node cubes2;
+	protected Node terrain;
+	protected Node spheres;
+	protected Node spheres2;
+
 	protected Node playerNode;
 	protected Geometry geom1;
 	protected Geometry levelgeom;
@@ -102,73 +105,88 @@ public class Level4 extends SimpleApplication implements ActionListener{
 		Terrain.setState(bulletAppState);
 		Terrain.setAsset(assetManager);
 		// --------------- Terrain 1 3x6 ----------------
-		Terrain t1 = new Terrain(3, 1f, 2f, ColorRGBA.Green);
-		t1.getGeom().move(0,-10,0);
+		Terrain t1 = new Terrain(2f, 0.5f, 2f, ColorRGBA.Green);
+		t1.getGeom().move(-5.09f,-8,-9f);
 		// --------------- Terrain 2 2x1 ----------------
-		Terrain t2 = new Terrain(1f, 0.5f, 1f, ColorRGBA.White);
-		t2.getGeom().move(4,-10,0);
-		// --------------- Terrain 3 10x4 ----------------
-		Terrain t3 = new Terrain(2f, 0.5f, 8f, ColorRGBA.White);
-		t3.getGeom().move(6f, -10, 7f);
-		// --------------- Terrain 2 2x1 ----------------
-		Terrain t7 = new Terrain(3, 1f, 2f, ColorRGBA.Gray);
-		t7.getGeom().move(0.8f,-10,7f);
-		// --------------- Terrain 4 2x1 ----------------
-		Terrain t4 = new Terrain(8, 0.5f, 2f, ColorRGBA.White);
-		t4.getGeom().move(12f, -10, 17.12f);
-		// --------------- Terrain 5 3x6 ----------------
-		Terrain t5 = new Terrain(2f, 0.5f, 8f, ColorRGBA.White);
-		t5.getGeom().move(18.2f, -10, 7f);
-		// --------------- Terrain 2 2x1 ----------------
-		Terrain t8 = new Terrain(2, 1f, 2f, ColorRGBA.Gray);
-		t8.getGeom().move(14f,-10,6f);
-		// --------------- Terrain 63x6 ----------------
-		Terrain t6 = new Terrain(4, 0.5f, 2f, ColorRGBA.Green);
-		t6.getGeom().move(20f,-10,-3f);
+		Terrain t2 = new Terrain(7f, 0.5f, 7f, ColorRGBA.White);
+		t2.getGeom().move(0,-8,0);
+		
 		// --------------- Terrain Collision -----------
 		Terrain.setCollision();
-
-		// ----------- Configuration des Cubes ---------
+    	// ----------- Configuration des Spheres ---------
+		
+		//-------------------------------------------------------
+		SphereObstacle.setAsset(assetManager);
+		sphereGroup = new SphereGroup();
+		sphereGroup2 = new SphereGroup();
+        spheres = sphereGroup.getNode();
+        spheres2 = sphereGroup2.getNode();
+        rootNode.attachChild(spheres);
+        rootNode.attachChild(spheres2);
+        spheres.setLocalTranslation(new Vector3f(0,0,0));
+        spheres2.setLocalTranslation(new Vector3f(0,0,0));
+        //--------------------------------------------------
+        SphereObstacle s21 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Red);
+        s21.getGeom().move(-5f,-7,-9); 
+		sphereGroup2.addSphere(s21);
+		
+     // ----------- Spheres 1 ---------
+        SphereObstacle s1 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Green);
+		s1.getGeom().move(2f,-7,-4); 
+        // ----------- Spheres 2 ---------
+        SphereObstacle s2 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s2.getGeom().move(-2,-7,-4); 
+		// ----------- Spheres 3 ---------
+        SphereObstacle s3 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Yellow);
+		s3.getGeom().move(2,-7,4);
+		// ----------- Spheres 4 ---------
+        SphereObstacle s4 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Red);
+		s4.getGeom().move(-2,-7,4);
+		// ----------- Spheres 4 ---------
+		SphereObstacle s5 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Cyan);
+		s5.getGeom().move(4.5f,-7,0f); 
+        // ----------- Spheres 2 ---------
+        SphereObstacle s6 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s6.getGeom().move(-4.5f,-7,0f); 
+		// ----------- Spheres 3 ---------
+        SphereObstacle s7 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Black);
+		s7.getGeom().move(-4f,-7,-2f);
+		// ----------- Spheres 4 ---------
+        SphereObstacle s8 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Blue);
+		s8.getGeom().move(4f,-7,-2f);
+		// ----------- Spheres 4 ---------
+		SphereObstacle s9 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Brown);
+		s9.getGeom().move(4,-7,2f); 
+        // ----------- Spheres 2 ---------
+        SphereObstacle s10 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Pink);
+		s10.getGeom().move(-4f,-7,2.5f); 
+		// ----------- Spheres 3 ---------
+        SphereObstacle s11 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.DarkGray);
+		s11.getGeom().move(-0.1f,-7,4.5f);
+		// ----------- Spheres 4 ---------
+        SphereObstacle s12 = new SphereObstacle(32, 32, 0.5f, ColorRGBA.Magenta);
+		s12.getGeom().move(-2f,-7,4f);
+		// ----------- Add Spheres to the group ---------
+		sphereGroup.addSphere(s1);
+		sphereGroup.addSphere(s2);
+	    sphereGroup.addSphere(s3);
+     	sphereGroup.addSphere(s4);
+	    sphereGroup.addSphere(s5);
+		sphereGroup.addSphere(s6);
+	    sphereGroup.addSphere(s7);
+	    sphereGroup.addSphere(s8);
+		sphereGroup.addSphere(s9);
+		sphereGroup.addSphere(s10);
+	    sphereGroup.addSphere(s11);
+//		sphereGroup.addSphere(s12);
+		//-------------------Jetton a prendre-------------------------
 		CubeObstacle.setAsset(assetManager);
 		cubeGroup = new CubeGroup();
-		cubes = cubeGroup.getNode();
-		rootNode.attachChild(cubes);
-		cubes.setLocalTranslation(new Vector3f(-2,0,0));
-		// ----------- Cube 1 ---------
-		CubeObstacle c1 = new CubeObstacle(0.6f, 0.6f, 0.6f, ColorRGBA.Blue);
-		c1.getGeom().move(9,-8,0); 
-		// ----------- Cube 2 ---------
-		CubeObstacle c2 = new CubeObstacle(0.6f, 0.6f, 0.6f, ColorRGBA.Blue);
-		c2.getGeom().move(6.5f,-8,4); 
-		// ----------- Cube 3 ---------
-		CubeObstacle c3 = new CubeObstacle(0.6f, 0.6f, 0.6f, ColorRGBA.Blue);
-		c3.getGeom().move(9,-8,8); 
-		// ----------- Cube 4 ---------
-		CubeObstacle c4 = new CubeObstacle(0.6f, 0.6f, 0.6f, ColorRGBA.Blue);
-		c4.getGeom().move(6.5f,-8,12); 
-		// ----------- Cube 5 ---------
-		CubeObstacle c5 = new CubeObstacle(0.6f, 0.6f, 0.6f, ColorRGBA.Blue);
-		c5.getGeom().move(10,-8,15.25f); 
-		// ----------- Cube 6 ---------
-		CubeObstacle c6 = new CubeObstacle(0.6f, 0.6f, 0.6f, ColorRGBA.Blue);
-		c6.getGeom().move(18.5f,-8,4); 
-		// ----------- Cube 7 ---------
-		CubeObstacle c7 = new CubeObstacle(0.6f, 0.6f, 0.6f, ColorRGBA.Blue);
-		c7.getGeom().move(21f,-8,8); 
-		// ----------- Cube 8 ---------
-		CubeObstacle c8 = new CubeObstacle(0.6f, 0.6f, 0.6f, ColorRGBA.Blue);
-		c8.getGeom().move(18.5f,-8,12); 
-		// ----------- Add Spheres to the group ---------
-		cubeGroup.addCube(c1);
-		cubeGroup.addCube(c2);
-		cubeGroup.addCube(c3);
-		cubeGroup.addCube(c4);
-		cubeGroup.addCube(c5);
-		cubeGroup.addCube(c6);
-		cubeGroup.addCube(c7);
-		cubeGroup.addCube(c8);
-
-		// ----------- Configuration des Spheres ---------
+        cubes = cubeGroup.getNode();
+        rootNode.attachChild(cubes);
+        cubes.setLocalTranslation(new Vector3f(0,0,0));
+        CubeObstacle c = new CubeObstacle(0.5f, 0.5f, 0.5f, ColorRGBA.Red);
+		c.getGeom().move(-5.5f,-7,0f);
 		
 
 		// ---------------- Player -----------------------
@@ -220,26 +238,31 @@ public class Level4 extends SimpleApplication implements ActionListener{
 
 	public void simpleUpdate(float tpf) {
 		movePlayer();
-		moveEffet();
-		moveObstacle();
+	moveObstacle();
+		bonus();
 	}
-
+private void bonus() {
+		
+		  if (sphereGroup2.collideWith(geom1)) {
+			 rootNode.detachChild(spheres2);
+    		 
+    	  }
+    	  
+    	     	  
+	}
 	private void moveObstacle() {
 		
-
-		if (cubeGroup.collideWith(geom1)) {
-             debris.setEndSize(2);
-			player.setPhysicsLocation(new Vector3f(0, 5f, 0));
-			player.setLinearVelocity(new Vector3f(0,0,0));
-		}
-
-		debris.setEndSize(0.1f);
-
+		sphereGroup.getNode().rotate(0, 0.002f, 0);
+		
+		
+    	  if (sphereGroup.collideWith(geom1)) {
+    		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
+    		  player.setLinearVelocity(new Vector3f(0,0,0));
+    		  rootNode.attachChild(spheres2);
+    	  }
+    	  
+    	     	  
 	}
-	private void moveEffet() {
-		debris.setLocalTranslation(player.getPhysicsLocation().x,player.getPhysicsLocation().y,
-				player.getPhysicsLocation().z);
-		}
 
 	private void movePlayer() {
 		speed = player.getLinearVelocity();
@@ -273,7 +296,7 @@ public class Level4 extends SimpleApplication implements ActionListener{
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Level4 app = new Level4();
+		Level6 app = new Level6();
 		app.start(); // start the game
 
 	}
