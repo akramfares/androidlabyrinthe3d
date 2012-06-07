@@ -56,41 +56,7 @@ public class Level3 extends SimpleApplication implements ActionListener{
 	
 	@Override
 	public void simpleInitApp() {
-		 /*if (renderer.getCaps().contains(Caps.GLSL100)){
-	            fpp=new FilterPostProcessor(assetManager);
-	            //fpp.setNumSamples(4);
-	            //CartoonEdgeFilter toon=new CartoonEdgeFilter();
-	            //toon.setDepthThreshold(0);
-	            //toon.setDepthSensitivity(150);
-	            //fpp.addFilter(toon);
-	            //viewPort.addProcessor(fpp);
-	            
-	            //fpp=new FilterPostProcessor(assetManager);
-	            //fpp.setNumSamples(4);
-	            fog=new FogFilter();
-	            fog.setFogColor(new ColorRGBA(0.9f, 0.9f, 0.9f, 1.0f));
-	            fog.setFogDistance(155);
-	            fog.setFogDensity(2.0f);
-	            fpp.addFilter(fog);
-	            viewPort.addProcessor(fpp);
-	        }
-		 DirectionalLight sun = new DirectionalLight();
-		 sun.setColor(ColorRGBA.White);
-		 sun.setDirection(new Vector3f(-.5f,-.5f,-.5f).normalizeLocal());
-		 rootNode.addLight(sun);
-		 	
-		 
-		 pssmRenderer = new PssmShadowRenderer(assetManager, 256 , 2);
-	        pssmRenderer.setDirection(new Vector3f(0.99f,-14.99f,4.99f).normalizeLocal());
-	        pssmRenderer.setLambda(0.55f);
-	        pssmRenderer.setShadowIntensity(0.6f);
-	        pssmRenderer.setCompareMode(CompareMode.Software);
-	        pssmRenderer.setFilterMode(FilterMode.PCF8);
-	        pssmRenderer.setEdgesThickness(1);
-	        pssmRenderer.setShadowZExtend(500);
-	        viewPort.addProcessor(pssmRenderer);
-		*/
-        
+	
 		bulletAppState = new BulletAppState();
 		stateManager.attach(bulletAppState);
 		bulletAppState.getPhysicsSpace().enableDebug(assetManager);
@@ -255,12 +221,12 @@ public class Level3 extends SimpleApplication implements ActionListener{
 	
 	public void simpleUpdate(float tpf) {
 		movePlayer();
-		moveObstacle();
+	moveObstacle();
     }
 
 	private void moveObstacle() {
-		if(sphereGroup.getNode().getLocalTranslation().z< -4f && speedSphere<0) speedSphere = 0.02f;
-		if(sphereGroup.getNode().getLocalTranslation().z> 4f && speedSphere>0) speedSphere = -0.02f;
+		if(sphereGroup.getNode().getLocalTranslation().z< -4f && speedSphere<0) speedSphere = 0.01f;
+		if(sphereGroup.getNode().getLocalTranslation().z> 4f && speedSphere>0) speedSphere = -0.01f;
 		sphereGroup.getNode().move(new Vector3f(0,0,speedSphere));
 		
 		

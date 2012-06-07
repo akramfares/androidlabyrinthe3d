@@ -262,8 +262,8 @@ public class Level1 extends SimpleApplication implements ActionListener{
 		/*if(s1geom.getLocalTranslation().x < 5f && speedSphere<0) speedSphere = 0.5f;
 		if(s1geom.getLocalTranslation().x > 25f && speedSphere>0) speedSphere = -0.5f;
 		s1geom.move(new Vector3f(speedSphere,0,0));*/
-		sphereGroup.getNode().rotate(0, 0.02f, 0);
-		sphereGroup2.getNode().rotate(0, -0.02f, 0);
+		sphereGroup.getNode().rotate(0, 0.001f, 0);
+		sphereGroup2.getNode().rotate(0, -0.001f, 0);
 		
     	  if (sphereGroup.collideWith(geom1)) {
     		  player.setPhysicsLocation(new Vector3f(0, 5f, 0));
